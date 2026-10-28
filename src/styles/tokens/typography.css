@@ -1,0 +1,21 @@
+/* Soloist HiFi Hub — type tokens.
+   General Sans for UI text, Fira Code for technical/numeric readouts
+   (bitrate, sample rate, dB, timestamps) — keeps the "compact/technical"
+   character the product already has, without leaning on system fonts. */
+
+:root {
+  --font-sans: 'General Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'Fira Code', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --text-display: 600 32px/1.15 var(--font-sans);
+  --text-title: 600 20px/1.3 var(--font-sans);
+  --text-subtitle: 500 15px/1.4 var(--font-sans);
+  --text-body: 400 14px/1.55 var(--font-sans);
+  --text-body-strong: 600 14px/1.5 var(--font-sans);
+  --text-label: 600 11px/1.3 var(--font-sans);
+  --letter-label: 0.08em;
+
+  --text-mono-lg: 500 18px/1.3 var(--font-mono);
+  --text-mono: 500 12px/1.4 var(--font-mono);
+  --text-mono-sm: 500 11px/1.3 var(--font-mono);
+}

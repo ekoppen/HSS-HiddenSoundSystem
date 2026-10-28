@@ -1,0 +1,751 @@
+<!-- @dsCard group="Soloist HiFi Hub" viewport="1240x760" name="App Shell" -->
+<!DOCTYPE html>
+<html data-theme="obsidian">
+<head>
+<meta charset="utf-8">
+<title>Soloist HiFi Hub — UI Kit</title>
+<link rel="stylesheet" href="../../styles.css">
+<script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script>
+window.addEventListener('DOMContentLoaded', function () {
+  document.querySelectorAll('script[type="text/jsx"]').forEach(function (tag) {
+    var code = tag.textContent;
+    var out = Babel.transform(code, { presets: [['react', { runtime: 'classic' }]] }).code;
+    (0, eval)(out);
+  });
+});
+</script>
+<script src="../../icons.js"></script>
+<script src="../../components-bundle.js"></script>
+<script src="../../image-slot.js"></script>
+<style>
+  html, body { margin: 0; height: 100%; }
+  #root { min-height: 100%; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/jsx">
+
+function AppShell({ activeTab, setActiveTab, onOpenTheme, children }) {
+  const { Radio, Cast, Volume2, Sliders, Sparkles, Key, Cpu, Wifi, Palette } = window.Icons;
+  const tabs = [
+    { id: 'player', label: 'Nu Afspelen', icon: Radio },
+    { id: 'cast', label: 'Cast & Smart Display', icon: Cast },
+    { id: 'volume-dac', label: 'Volume & DAC Output', icon: Volume2 },
+    { id: 'playlists', label: 'Media Center & Radio', icon: Sliders },
+    { id: 'advanced-audio', label: 'Geavanceerde Audio & EQ', icon: Sparkles },
+    { id: 'auth-api', label: 'Spotify & Instellingen', icon: Key },
+    { id: 'scripts', label: 'Raspberry Pi Script Center', icon: Cpu },
+    { id: 'websocket-stream', label: 'Live WebSocket Stream', icon: Wifi },
+  ];
+
+  return (
+    <div style={{ minHeight: '100%', background: 'var(--bg-page)', color: 'var(--text-primary)', fontFamily: 'var(--font-sans)', display: 'flex' }}>
+      <aside style={{ width: 232, flexShrink: 0, display: 'flex', flexDirection: 'column', background: 'var(--bg-surface)', borderRight: '1px solid var(--border-subtle)', minHeight: '100vh' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '24px 20px 20px' }}>
+          <div style={{ width: 38, height: 38, borderRadius: 'var(--radius-md)', background: 'var(--accent-soft)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <Radio size={18} style={{ color: 'var(--accent)' }} />
+          </div>
+          <div style={{ minWidth: 0 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <span style={{ font: 'var(--text-title)', fontSize: 16, color: 'var(--text-primary)' }}>Soloist Hub</span>
+              <span style={{ font: 'var(--text-mono-sm)', color: 'var(--accent)', background: 'var(--accent-soft)', padding: '2px 6px', borderRadius: 4 }}>v2.4</span>
+            </div>
+            <div style={{ font: 'var(--text-mono-sm)', color: 'var(--text-muted)', marginTop: 2 }}>Raspberry Pi 5</div>
+          </div>
+        </div>
+
+        <nav style={{ display: 'flex', flexDirection: 'column', gap: 2, padding: '4px 12px', flex: 1 }}>
+          {tabs.map((tab) => {
+            const Icon = tab.icon;
+            const isActive = tab.id === activeTab;
+            return (
+              <button key={tab.id} onClick={() => setActiveTab(tab.id)} style={{
+                display: 'flex', alignItems: 'center', gap: 11, padding: '10px 12px', borderRadius: 'var(--radius-md)',
+                font: 'var(--text-body-strong)', fontSize: 13, textAlign: 'left', cursor: 'pointer',
+                background: isActive ? 'var(--accent-soft)' : 'transparent',
+                color: isActive ? 'var(--accent)' : 'var(--text-secondary)',
+                border: '1px solid ' + (isActive ? 'var(--accent-soft-strong)' : 'transparent'),
+              }}>
+                <Icon size={16} style={{ flexShrink: 0 }} />
+                <span>{tab.label}</span>
+              </button>
+            );
+          })}
+        </nav>
+
+        <div style={{ padding: 12, display: 'flex', flexDirection: 'column', gap: 8, borderTop: '1px solid var(--border-subtle)' }}>
+          <button onClick={onOpenTheme} title="Thema wijzigen" style={{
+            display: 'flex', alignItems: 'center', gap: 10, padding: '9px 12px', borderRadius: 'var(--radius-md)',
+            background: 'var(--bg-card)', border: '1px solid var(--border-default)', color: 'var(--text-secondary)',
+            font: 'var(--text-body-strong)', fontSize: 13, cursor: 'pointer',
+          }}>
+            <Palette size={16} style={{ color: 'var(--accent)' }} />
+            <span>Thema</span>
+          </button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, font: 'var(--text-mono-sm)', color: 'var(--text-muted)', padding: '0 12px' }}>
+            <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--status-success)', flexShrink: 0 }} />
+            <span>CPU 47°C · 320kbps</span>
+          </div>
+        </div>
+      </aside>
+
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <header style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, padding: '16px 32px', borderBottom: '1px solid var(--border-subtle)', background: 'var(--bg-surface)' }}>
+          <span style={{ font: 'var(--text-title)', color: 'var(--text-primary)' }}>{tabs.find((t) => t.id === activeTab)?.label}</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '6px 12px', borderRadius: 'var(--radius-md)', background: 'rgba(52,211,153,0.1)', border: '1px solid rgba(52,211,153,0.2)', color: 'var(--status-success)', font: 'var(--text-mono-sm)' }}>
+            <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--status-success)' }} />
+            <span>Live WebSocket verbonden</span>
+          </div>
+        </header>
+        <main style={{ maxWidth: 1080, padding: '28px 32px 60px', minWidth: 0 }}>{children}</main>
+      </div>
+    </div>
+  );
+}
+
+
+
+function NowPlayingScreen() {
+  const { Card, IconButton, Slider, SpecStat, SpectrumBars, Badge } = window.SoloistDS;
+  const { Shuffle, Rewind, Play, Pause, FastForward, Repeat, Volume2, Cast, ListMusic, Disc } = window.Icons;
+
+  const [isPlaying, setIsPlaying] = React.useState(true);
+  const [shuffle, setShuffle] = React.useState(false);
+  const [repeat, setRepeat] = React.useState(false);
+  const [volume, setVolume] = React.useState(62);
+  const [position, setPosition] = React.useState(84000);
+  const duration = 220000;
+  const [spectrum, setSpectrum] = React.useState(() => Array.from({ length: 16 }, () => 20));
+
+  React.useEffect(() => {
+    if (!isPlaying) return;
+    const id = setInterval(() => {
+      setSpectrum(Array.from({ length: 16 }, () => 10 + Math.random() * 80));
+      setPosition((p) => Math.min(duration, p + 1000));
+    }, 700);
+    return () => clearInterval(id);
+  }, [isPlaying]);
+
+  const fmt = (ms) => {
+    const s = Math.floor(ms / 1000);
+    return Math.floor(s / 60) + ':' + (s % 60 < 10 ? '0' : '') + (s % 60);
+  };
+
+  const queue = [
+    { title: 'Nightcall', artist: 'Kavinsky', dur: '4:18' },
+    { title: 'Sunset Boulevard', artist: 'FM-84', dur: '3:52' },
+    { title: 'Turbo Killer', artist: 'Carpenter Brut', dur: '4:41' },
+  ];
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+      <Card padding={0} style={{ overflow: 'hidden' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'minmax(180px, 280px) 1fr', gap: 32, padding: 32 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16 }}>
+            <div style={{ width: 232, height: 232, borderRadius: 'var(--radius-lg)', position: 'relative', overflow: 'hidden' }}>
+              <image-slot id="now-playing-art" shape="rounded" radius={16} placeholder="Album art"></image-slot>
+              <div style={{ position: 'absolute', top: 10, left: 10 }}>
+                <Badge variant={isPlaying ? 'success' : 'neutral'}>{isPlaying ? 'SPOTIFY HD' : 'STANDBY'}</Badge>
+              </div>
+            </div>
+            <div style={{ display: 'flex', gap: 0, width: '100%', padding: '10px 14px', background: 'var(--bg-inset)', borderRadius: 'var(--radius-md)', justifyContent: 'space-between' }}>
+              <SpecStat label="Bitrate" value="320 kbps" tone="status-success" />
+              <SpecStat label="DAC" value="24/44.1" tone="accent" />
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', gap: 20 }}>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+                <span style={{ font: 'var(--text-label)', letterSpacing: 'var(--letter-label)', textTransform: 'uppercase', color: 'var(--accent)' }}>
+                  {isPlaying ? 'Nu Wordt Afgespeeld' : 'Gepauzeerd'}
+                </span>
+                <IconButton icon={<Cast size={16} />} title="Casten" />
+              </div>
+              <h2 style={{ font: 'var(--text-display)', color: 'var(--text-primary)', margin: '6px 0 2px' }}>Nightcall</h2>
+              <p style={{ font: 'var(--text-subtitle)', color: 'var(--text-secondary)', margin: 0 }}>Kavinsky</p>
+              <p style={{ font: 'var(--text-mono-sm)', color: 'var(--text-muted)', marginTop: 6 }}>Album: OutRun · Label: Record Makers</p>
+            </div>
+
+            <div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
+                <span style={{ font: 'var(--text-mono-sm)', color: 'var(--accent)' }}>REAL-TIME I2S FREQUENTIE SPECTRUM</span>
+                <span style={{ font: 'var(--text-mono-sm)', color: 'var(--text-muted)' }}>31Hz – 16kHz</span>
+              </div>
+              <SpectrumBars values={spectrum} active={isPlaying} />
+            </div>
+
+            <Slider value={position} max={duration} onChange={setPosition} valueLabel={fmt(position) + ' / -' + fmt(duration - position)} />
+
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12, flexWrap: 'wrap' }}>
+              <IconButton icon={<Shuffle size={18} />} active={shuffle} onClick={() => setShuffle(!shuffle)} title="Shuffle" />
+              <IconButton icon={<Rewind size={20} />} title="Vorige" size={40} />
+              <button onClick={() => setIsPlaying(!isPlaying)} style={{
+                width: 56, height: 56, borderRadius: '50%', background: 'var(--accent)', color: 'var(--on-accent)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', border: 'none', cursor: 'pointer',
+                boxShadow: 'var(--shadow-accent-glow)',
+              }}>
+                {isPlaying ? <Pause size={24} fill="currentColor" /> : <Play size={24} fill="currentColor" style={{ marginLeft: 2 }} />}
+              </button>
+              <IconButton icon={<FastForward size={20} />} title="Volgende" size={40} />
+              <IconButton icon={<Repeat size={18} />} active={repeat} onClick={() => setRepeat(!repeat)} title="Repeat" />
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+              <Volume2 size={16} style={{ color: 'var(--text-muted)' }} />
+              <Slider value={volume} onChange={setVolume} />
+              <span style={{ font: 'var(--text-mono-sm)', color: 'var(--text-secondary)', width: 36, textAlign: 'right', flexShrink: 0 }}>{volume}%</span>
+            </div>
+          </div>
+        </div>
+      </Card>
+
+      <Card>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
+          <ListMusic size={15} style={{ color: 'var(--accent)' }} />
+          <span style={{ font: 'var(--text-label)', letterSpacing: 'var(--letter-label)', textTransform: 'uppercase', color: 'var(--text-primary)' }}>Volgende in Wachtrij ({queue.length})</span>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
+          {queue.map((t, i) => (
+            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: 10, borderRadius: 'var(--radius-md)', background: 'var(--bg-inset)' }}>
+              <span style={{ font: 'var(--text-mono-sm)', color: 'var(--text-muted)' }}>{i + 1}</span>
+              <div style={{ width: 34, height: 34, borderRadius: 8, background: 'var(--bg-card)', flexShrink: 0 }} />
+              <div style={{ minWidth: 0, flex: 1 }}>
+                <div style={{ font: 'var(--text-body-strong)', fontSize: 12.5, color: 'var(--text-primary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{t.title}</div>
+                <div style={{ font: 'var(--text-mono-sm)', color: 'var(--text-muted)' }}>{t.artist}</div>
+              </div>
+              <span style={{ font: 'var(--text-mono-sm)', color: 'var(--text-muted)' }}>{t.dur}</span>
+            </div>
+          ))}
+        </div>
+      </Card>
+    </div>
+  );
+}
+
+
+
+function MediaCenterScreen() {
+  const { Card, Button, Badge } = window.SoloistDS;
+  const { Disc, Radio, HardDrive, ListMusic, Search, Plus, Play } = window.Icons;
+
+  const [source, setSource] = React.useState('spotify');
+  const [selectedPlaylist, setSelectedPlaylist] = React.useState(0);
+
+  const sources = [
+    { id: 'spotify', label: 'Spotify Playlists (12)', icon: Disc },
+    { id: 'radio', label: 'Web Radio (6)', icon: Radio },
+    { id: 'local_nas', label: 'Lokale & NAS Muziek (3)', icon: HardDrive },
+    { id: 'queue', label: 'Wachtrij (3)', icon: ListMusic },
+  ];
+
+  const playlists = [
+    { name: 'Synthwave Essentials', count: 42 },
+    { name: 'Zondagochtend Jazz', count: 28 },
+    { name: 'Deep Focus', count: 65 },
+    { name: 'Vinyl Classics', count: 19 },
+  ];
+
+  const tracks = [
+    { title: 'Nightcall', artist: 'Kavinsky', dur: '4:18' },
+    { title: 'Sunset Boulevard', artist: 'FM-84', dur: '3:52' },
+    { title: 'Turbo Killer', artist: 'Carpenter Brut', dur: '4:41' },
+    { title: 'A Real Hero', artist: 'College, Electric Youth', dur: '5:35' },
+  ];
+
+  const radioStations = [
+    { name: 'NPO Radio 1', genre: 'Nieuws & Achtergronden' },
+    { name: 'Concertzender', genre: 'Klassiek & Jazz' },
+    { name: 'Studio Brussel', genre: 'Alternative' },
+  ];
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+      <Card>
+        <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 16 }}>
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <div style={{ width: 34, height: 34, borderRadius: 'var(--radius-md)', background: 'var(--accent-soft)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Disc size={16} style={{ color: 'var(--accent)' }} />
+              </div>
+              <span style={{ font: 'var(--text-title)', color: 'var(--text-primary)' }}>Media Center & Audio Bronnen</span>
+            </div>
+            <p style={{ font: 'var(--text-mono-sm)', color: 'var(--text-muted)', marginTop: 6 }}>Koppel Spotify, Web Radio, Lokale/NAS bestanden en beheer je live wachtrij</p>
+          </div>
+          <div style={{ display: 'flex', gap: 4, padding: 4, background: 'var(--bg-inset)', borderRadius: 'var(--radius-lg)', flexWrap: 'wrap' }}>
+            {sources.map((s) => {
+              const Icon = s.icon;
+              const active = source === s.id;
+              return (
+                <button key={s.id} onClick={() => setSource(s.id)} style={{
+                  display: 'flex', alignItems: 'center', gap: 7, padding: '8px 12px', borderRadius: 'var(--radius-md)',
+                  font: 'var(--text-mono-sm)', fontWeight: 600, whiteSpace: 'nowrap', cursor: 'pointer',
+                  background: active ? 'var(--bg-card)' : 'transparent',
+                  color: active ? 'var(--text-primary)' : 'var(--text-muted)',
+                  border: '1px solid ' + (active ? 'var(--border-default)' : 'transparent'),
+                }}>
+                  <Icon size={13} style={{ color: active ? 'var(--accent)' : 'var(--text-muted)' }} />
+                  <span>{s.label}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </Card>
+
+      {source === 'spotify' && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+            <Button variant="secondary" icon={<Search size={14} />}>Zoek live in Spotify catalogus</Button>
+            <Button variant="primary" icon={<Plus size={14} />}>Spotify playlist importeren (URL)</Button>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: '300px 1fr', gap: 20 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              <span style={{ font: 'var(--text-label)', letterSpacing: 'var(--letter-label)', textTransform: 'uppercase', color: 'var(--text-muted)', padding: '0 4px' }}>Mijn Spotify playlists ({playlists.length})</span>
+              {playlists.map((p, i) => (
+                <div key={i} onClick={() => setSelectedPlaylist(i)} style={{
+                  display: 'flex', alignItems: 'center', gap: 12, padding: 12, borderRadius: 'var(--radius-md)', cursor: 'pointer',
+                  background: selectedPlaylist === i ? 'var(--accent-soft)' : 'var(--bg-card)',
+                  border: '1px solid ' + (selectedPlaylist === i ? 'var(--accent-soft-strong)' : 'var(--border-subtle)'),
+                }}>
+                  <div style={{ width: 40, height: 40, borderRadius: 8, background: 'var(--bg-inset)', flexShrink: 0 }} />
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ font: 'var(--text-body-strong)', fontSize: 13, color: 'var(--text-primary)' }}>{p.name}</div>
+                    <div style={{ font: 'var(--text-mono-sm)', color: 'var(--text-muted)' }}>{p.count} nummers</div>
+                  </div>
+                  <Play size={14} style={{ color: 'var(--accent)' }} />
+                </div>
+              ))}
+            </div>
+
+            <Card>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid var(--border-subtle)', paddingBottom: 16, marginBottom: 16 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                  <div style={{ width: 56, height: 56, borderRadius: 'var(--radius-md)', background: 'var(--bg-inset)' }} />
+                  <div>
+                    <div style={{ font: 'var(--text-title)', color: 'var(--text-primary)' }}>{playlists[selectedPlaylist].name}</div>
+                    <div style={{ font: 'var(--text-mono-sm)', color: 'var(--text-muted)', marginTop: 2 }}>{playlists[selectedPlaylist].count} nummers</div>
+                  </div>
+                </div>
+                <Button variant="primary" icon={<Play size={14} fill="currentColor" />}>Speel alles af</Button>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                {tracks.map((t, i) => (
+                  <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 8px', borderRadius: 'var(--radius-md)' }}>
+                    <span style={{ font: 'var(--text-mono-sm)', color: 'var(--text-muted)', width: 18 }}>{i + 1}</span>
+                    <div style={{ width: 34, height: 34, borderRadius: 8, background: 'var(--bg-inset)', flexShrink: 0 }} />
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ font: 'var(--text-body-strong)', fontSize: 12.5, color: 'var(--text-primary)' }}>{t.title}</div>
+                      <div style={{ font: 'var(--text-mono-sm)', color: 'var(--text-muted)' }}>{t.artist}</div>
+                    </div>
+                    <span style={{ font: 'var(--text-mono-sm)', color: 'var(--text-muted)' }}>{t.dur}</span>
+                    <Plus size={14} style={{ color: 'var(--accent)' }} />
+                  </div>
+                ))}
+              </div>
+            </Card>
+          </div>
+        </div>
+      )}
+
+      {source === 'radio' && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10 }}>
+            <span style={{ font: 'var(--text-label)', letterSpacing: 'var(--letter-label)', textTransform: 'uppercase', color: 'var(--text-muted)' }}>Mijn Web Radio zenders ({radioStations.length})</span>
+            <Button variant="secondary" icon={<Plus size={14} />}>Zender handmatig toevoegen</Button>
+          </div>
+          <Card>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px', background: 'var(--bg-inset)', borderRadius: 'var(--radius-md)', marginBottom: 16 }}>
+              <Search size={15} style={{ color: 'var(--text-muted)' }} />
+              <span style={{ font: 'var(--text-body)', color: 'var(--text-muted)' }}>Zoek wereldwijd in 40.000+ internet radio zenders...</span>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
+              {radioStations.map((s, i) => (
+                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: 12, borderRadius: 'var(--radius-md)', background: 'var(--bg-inset)' }}>
+                  <div style={{ width: 36, height: 36, borderRadius: 10, background: 'var(--bg-card)', flexShrink: 0 }} />
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ font: 'var(--text-body-strong)', fontSize: 12.5, color: 'var(--text-primary)' }}>{s.name}</div>
+                    <div style={{ font: 'var(--text-mono-sm)', color: 'var(--text-muted)' }}>{s.genre}</div>
+                  </div>
+                  <Radio size={14} style={{ color: 'var(--accent)' }} />
+                </div>
+              ))}
+            </div>
+          </Card>
+        </div>
+      )}
+
+      {(source === 'local_nas' || source === 'queue') && (
+        <Card>
+          <div style={{ textAlign: 'center', padding: '40px 0', color: 'var(--text-muted)' }}>
+            <HardDrive size={28} style={{ margin: '0 auto 12px', display: 'block' }} />
+            <p style={{ font: 'var(--text-body)' }}>Zelfde kaart- en lijstpatronen als hierboven, met de tokens van deze bron.</p>
+          </div>
+        </Card>
+      )}
+    </div>
+  );
+}
+
+
+
+function ThemeCustomizerModalContent({ current, onSelect }) {
+  const { ThemeSwitchCard, Button } = window.SoloistDS;
+  const { Sparkles } = window.Icons;
+  const themes = ['obsidian', 'slate', 'emerald', 'copper'];
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+        {themes.map((id) => (
+          <ThemeSwitchCard key={id} themeId={id} active={current === id} onSelect={onSelect} />
+        ))}
+      </div>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, padding: 14, background: 'var(--bg-inset)', borderRadius: 'var(--radius-md)', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, font: 'var(--text-mono-sm)', color: 'var(--text-muted)' }}>
+          <Sparkles size={15} style={{ color: 'var(--accent)' }} />
+          <span>Thema's worden direct gesynchroniseerd met de Google Nest Hub weergave.</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
+function CastDesignScreen({ onOpenContentEditor }) {
+  const { Card, Button, Badge, Toggle } = window.SoloistDS;
+  const { Tv, Radio, Sliders, Palette, Check, RefreshCw, Disc, Cast, Zap } = window.Icons;
+
+  const devices = [
+    { id: 'kitchen', name: 'Nest Hub Keuken', ip: '192.168.1.42', model: 'Nest Hub · 1024×600' },
+    { id: 'living', name: 'Nest Hub Max Woonkamer', ip: '192.168.1.58', model: 'Nest Hub Max · 1280×800' },
+  ];
+  const layouts = [
+    { id: 'kiosk_touch', name: 'Touch Kiosk Controller', desc: 'Grote knoppen, volumeschuif en bronkeuze' },
+    { id: 'artwork_focus', name: 'Artwork Focus', desc: 'Draaiende plaat en groot albumhoes-beeld' },
+    { id: 'audiophile_hud', name: 'Audiophile Spectrum HUD', desc: 'Real-time FFT analyzer en DAC telemetrie' },
+    { id: 'ambient_clock', name: 'Ambient Klok & Track', desc: 'Grote klok met zachte albumhoes op de achtergrond' },
+  ];
+
+  const [deviceId, setDeviceId] = React.useState('kitchen');
+  const [layout, setLayout] = React.useState('kiosk_touch');
+  const [autoCast, setAutoCast] = React.useState({ onPlay: true, onPause: true });
+
+  const device = devices.find((d) => d.id === deviceId);
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+      <Card>
+        <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 16 }}>
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <div style={{ width: 34, height: 34, borderRadius: 'var(--radius-md)', background: 'var(--accent-soft)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Tv size={16} style={{ color: 'var(--accent)' }} />
+              </div>
+              <span style={{ font: 'var(--text-title)', color: 'var(--text-primary)' }}>Cast & Smart Display</span>
+            </div>
+            <p style={{ font: 'var(--text-mono-sm)', color: 'var(--text-muted)', marginTop: 6 }}>Richt in wat je Google Nest Hub laat zien terwijl je muziek streamt</p>
+          </div>
+          <Badge variant="success">STANDBY</Badge>
+        </div>
+      </Card>
+
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+          <Card>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
+              <span style={{ font: 'var(--text-label)', letterSpacing: 'var(--letter-label)', textTransform: 'uppercase', color: 'var(--text-muted)' }}>1. Cast apparaat</span>
+              <RefreshCw size={13} style={{ color: 'var(--text-muted)' }} />
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              {devices.map((d) => {
+                const sel = d.id === deviceId;
+                return (
+                  <div key={d.id} onClick={() => setDeviceId(d.id)} style={{
+                    display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, padding: 12, borderRadius: 'var(--radius-md)', cursor: 'pointer',
+                    background: sel ? 'var(--accent-soft)' : 'var(--bg-inset)', border: '1px solid ' + (sel ? 'var(--accent-soft-strong)' : 'var(--border-subtle)'),
+                  }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                      <Tv size={16} style={{ color: sel ? 'var(--accent)' : 'var(--text-muted)' }} />
+                      <div>
+                        <div style={{ font: 'var(--text-body-strong)', fontSize: 12.5, color: 'var(--text-primary)' }}>{d.name}</div>
+                        <div style={{ font: 'var(--text-mono-sm)', color: 'var(--text-muted)' }}>{d.ip} · {d.model}</div>
+                      </div>
+                    </div>
+                    {sel && <Check size={15} style={{ color: 'var(--accent)' }} />}
+                  </div>
+                );
+              })}
+            </div>
+          </Card>
+
+          <Card>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
+              <Sliders size={13} style={{ color: 'var(--text-muted)' }} />
+              <span style={{ font: 'var(--text-label)', letterSpacing: 'var(--letter-label)', textTransform: 'uppercase', color: 'var(--text-muted)' }}>2. Weergave layout</span>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+              {layouts.map((l) => {
+                const sel = l.id === layout;
+                return (
+                  <div key={l.id} onClick={() => setLayout(l.id)} style={{
+                    padding: 12, borderRadius: 'var(--radius-md)', cursor: 'pointer',
+                    background: sel ? 'var(--accent-soft)' : 'var(--bg-inset)', border: '1px solid ' + (sel ? 'var(--accent-soft-strong)' : 'var(--border-subtle)'),
+                  }}>
+                    <div style={{ font: 'var(--text-body-strong)', fontSize: 12.5, color: 'var(--text-primary)' }}>{l.name}</div>
+                    <div style={{ font: 'var(--text-mono-sm)', color: 'var(--text-muted)', marginTop: 4 }}>{l.desc}</div>
+                  </div>
+                );
+              })}
+            </div>
+          </Card>
+
+          <Card>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
+              <Zap size={13} style={{ color: 'var(--text-muted)' }} />
+              <span style={{ font: 'var(--text-label)', letterSpacing: 'var(--letter-label)', textTransform: 'uppercase', color: 'var(--text-muted)' }}>3. Automatisering</span>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              <Toggle checked={autoCast.onPlay} onChange={() => setAutoCast((a) => ({ ...a, onPlay: !a.onPlay }))} label="Automatisch casten bij afspelen" description={'Start het scherm zodra muziek begint op ' + device.name} />
+              <Toggle checked={autoCast.onPause} onChange={() => setAutoCast((a) => ({ ...a, onPause: !a.onPause }))} label="Automatisch stoppen bij pauze" description="Nest Hub keert terug naar het startscherm" />
+            </div>
+          </Card>
+        </div>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+          <Card>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
+              <span style={{ font: 'var(--text-label)', letterSpacing: 'var(--letter-label)', textTransform: 'uppercase', color: 'var(--text-muted)' }}>Live voorbeeld — {device.model}</span>
+            </div>
+            <div style={{ padding: 14, background: 'var(--bg-inset)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border-default)' }}>
+              <div style={{
+                aspectRatio: '16/10', borderRadius: 'var(--radius-md)', background: 'var(--bg-page)', border: '1px solid var(--border-subtle)',
+                display: 'flex', flexDirection: 'column', justifyContent: 'space-between', padding: 16, position: 'relative', overflow: 'hidden',
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', font: 'var(--text-mono-sm)' }}>
+                  <span style={{ display: 'flex', alignItems: 'center', gap: 6, color: 'var(--status-success)' }}>
+                    <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--status-success)' }} />
+                    SOLOIST KIOSK
+                  </span>
+                  <span style={{ color: 'var(--text-muted)' }}>14:45 · vr 18 aug</span>
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                  <div style={{ width: 76, height: 76, borderRadius: 'var(--radius-md)', flexShrink: 0, overflow: 'hidden' }}>
+                    <image-slot id="cast-preview-art" shape="rounded" radius={10} placeholder="Album art"></image-slot>
+                  </div>
+                  <div style={{ minWidth: 0 }}>
+                    <div style={{ font: 'var(--text-mono-sm)', color: 'var(--accent)' }}>{layouts.find((l) => l.id === layout)?.name}</div>
+                    <div style={{ font: 'var(--text-subtitle)', color: 'var(--text-primary)', marginTop: 2 }}>Nightcall</div>
+                    <div style={{ font: 'var(--text-mono-sm)', color: 'var(--text-muted)' }}>Kavinsky</div>
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'flex-end', gap: 2, height: 28 }}>
+                  {Array.from({ length: 24 }).map((_, i) => (
+                    <div key={i} style={{ flex: 1, height: (20 + (i * 37) % 60) + '%', borderRadius: 1, background: 'linear-gradient(to top, var(--meter-1), var(--meter-2) 60%, var(--meter-3))' }} />
+                  ))}
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', font: 'var(--text-mono-sm)', color: 'var(--text-muted)' }}>
+                  <span>Vol: 62%</span>
+                  <div style={{ display: 'flex', gap: 6 }}>
+                    <span style={{ padding: '2px 8px', borderRadius: 4, background: 'var(--bg-card)' }}>Play/Pauze</span>
+                    <span style={{ padding: '2px 8px', borderRadius: 4, background: 'var(--bg-card)' }}>Wachtrij</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </Card>
+
+          <div style={{ display: 'flex', gap: 10 }}>
+            <Button variant="secondary" icon={<Sliders size={14} />} onClick={onOpenContentEditor}>Inhoud & vormgeving bewerken</Button>
+          </div>
+          <div style={{ display: 'flex', gap: 10 }}>
+            <Button variant="primary" icon={<Cast size={14} />}>Cast naar {device.name}</Button>
+            <Button variant="secondary" icon={<Zap size={14} />}>Test in browser</Button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
+function CastContentEditor() {
+  const { Card, Slider, Toggle } = window.SoloistDS;
+  const { Image, Type, Palette, Layers } = window.Icons;
+
+  const [artSize, setArtSize] = React.useState(76);
+  const [artRadius, setArtRadius] = React.useState(10);
+  const [artShadow, setArtShadow] = React.useState(true);
+  const [bgStyle, setBgStyle] = React.useState('solid');
+  const [align, setAlign] = React.useState('left');
+  const [titleSize, setTitleSize] = React.useState(20);
+  const [glow, setGlow] = React.useState(false);
+  const [els, setEls] = React.useState({ spectrum: true, controls: true, queue: true, sourceSwitch: false, clock: true });
+  const toggleEl = (key) => setEls((e) => ({ ...e, [key]: !e[key] }));
+
+  const SegButton = ({ active, onClick, children }) => (
+    <button onClick={onClick} style={{
+      flex: 1, padding: '8px 10px', borderRadius: 'var(--radius-sm)', font: 'var(--text-mono-sm)', fontWeight: 600,
+      cursor: 'pointer', background: active ? 'var(--accent-soft)' : 'transparent',
+      color: active ? 'var(--accent)' : 'var(--text-secondary)', border: '1px solid ' + (active ? 'var(--accent-soft-strong)' : 'var(--border-default)'),
+    }}>{children}</button>
+  );
+
+  const bgMap = { solid: 'var(--bg-page)', glow: 'radial-gradient(circle at 30% 30%, var(--accent-soft-strong), var(--bg-page) 70%)', gradient: 'linear-gradient(160deg, var(--bg-page), var(--bg-inset))' };
+
+  return (
+    <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 24, alignItems: 'start' }}>
+      <Card>
+        <div style={{ font: 'var(--text-label)', letterSpacing: 'var(--letter-label)', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 14 }}>Live voorbeeld</div>
+        <div style={{ padding: 14, background: 'var(--bg-inset)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border-default)' }}>
+          <div style={{
+            aspectRatio: '16/10', borderRadius: 'var(--radius-md)', background: bgMap[bgStyle], border: '1px solid var(--border-subtle)',
+            display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: 28, position: 'relative', overflow: 'hidden',
+          }}>
+            <div style={{ display: 'flex', flexDirection: align === 'center' ? 'column' : 'row', alignItems: 'center', gap: 20, textAlign: align === 'center' ? 'center' : 'left' }}>
+              <div style={{
+                width: artSize, height: artSize, borderRadius: artRadius, flexShrink: 0, overflow: 'hidden',
+                boxShadow: artShadow ? 'var(--shadow-elevated)' : 'none',
+              }}>
+                <image-slot id="content-editor-art" shape="rect" radius={artRadius} placeholder="Album art"></image-slot>
+              </div>
+              <div style={{ minWidth: 0 }}>
+                <div style={{ font: 'var(--text-mono-sm)', color: 'var(--accent)' }}>NU AFSPELEN</div>
+                <div style={{ fontSize: titleSize, fontWeight: 600, color: 'var(--text-primary)', marginTop: 4, fontFamily: 'var(--font-sans)' }}>Nightcall</div>
+                <div style={{ font: 'var(--text-body)', color: 'var(--text-secondary)', marginTop: 2 }}>Kavinsky</div>
+              </div>
+            </div>
+            {glow && <div style={{ position: 'absolute', inset: 0, boxShadow: 'inset 0 0 80px var(--accent-soft)', pointerEvents: 'none' }} />}
+            {els.clock && <span style={{ position: 'absolute', top: 12, right: 14, font: 'var(--text-mono-sm)', color: 'var(--text-muted)' }}>14:45 · vr 18 aug</span>}
+            {els.spectrum && (
+              <div style={{ position: 'absolute', left: 28, right: 28, bottom: 14, display: 'flex', alignItems: 'flex-end', gap: 2, height: 20 }}>
+                {Array.from({ length: 24 }).map((_, i) => (
+                  <div key={i} style={{ flex: 1, height: (20 + (i * 37) % 60) + '%', borderRadius: 1, background: 'linear-gradient(to top, var(--meter-1), var(--meter-2) 60%, var(--meter-3))' }} />
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      </Card>
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+        <Card>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
+            <Palette size={13} style={{ color: 'var(--text-muted)' }} />
+            <span style={{ font: 'var(--text-label)', letterSpacing: 'var(--letter-label)', textTransform: 'uppercase', color: 'var(--text-muted)' }}>Achtergrond</span>
+          </div>
+          <div style={{ display: 'flex', gap: 6 }}>
+            <SegButton active={bgStyle === 'solid'} onClick={() => setBgStyle('solid')}>Effen</SegButton>
+            <SegButton active={bgStyle === 'glow'} onClick={() => setBgStyle('glow')}>Gloed</SegButton>
+            <SegButton active={bgStyle === 'gradient'} onClick={() => setBgStyle('gradient')}>Verloop</SegButton>
+          </div>
+        </Card>
+
+        <Card>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
+            <Image size={13} style={{ color: 'var(--text-muted)' }} />
+            <span style={{ font: 'var(--text-label)', letterSpacing: 'var(--letter-label)', textTransform: 'uppercase', color: 'var(--text-muted)' }}>Album art</span>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+            <Slider label="Grootte" value={artSize} min={48} max={140} onChange={setArtSize} valueLabel={artSize + 'px'} />
+            <Slider label="Hoekradius" value={artRadius} min={0} max={32} onChange={setArtRadius} valueLabel={artRadius + 'px'} />
+            <Toggle checked={artShadow} onChange={setArtShadow} label="Schaduw" description="Zachte drop shadow onder de art" />
+          </div>
+        </Card>
+
+        <Card>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
+            <Type size={13} style={{ color: 'var(--text-muted)' }} />
+            <span style={{ font: 'var(--text-label)', letterSpacing: 'var(--letter-label)', textTransform: 'uppercase', color: 'var(--text-muted)' }}>Tekst & uitlijning</span>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+            <div style={{ display: 'flex', gap: 6 }}>
+              <SegButton active={align === 'left'} onClick={() => setAlign('left')}>Links</SegButton>
+              <SegButton active={align === 'center'} onClick={() => setAlign('center')}>Gecentreerd</SegButton>
+            </div>
+            <Slider label="Titelgrootte" value={titleSize} min={14} max={32} onChange={setTitleSize} valueLabel={titleSize + 'px'} />
+          </div>
+        </Card>
+
+        <Card>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
+            <Layers size={13} style={{ color: 'var(--text-muted)' }} />
+            <span style={{ font: 'var(--text-label)', letterSpacing: 'var(--letter-label)', textTransform: 'uppercase', color: 'var(--text-muted)' }}>Effecten</span>
+          </div>
+          <Toggle checked={glow} onChange={setGlow} label="Binnenrand gloed" description="Subtiele accentgloed langs de randen" />
+        </Card>
+
+        <Card>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
+            <Layers size={13} style={{ color: 'var(--text-muted)' }} />
+            <span style={{ font: 'var(--text-label)', letterSpacing: 'var(--letter-label)', textTransform: 'uppercase', color: 'var(--text-muted)' }}>Schermelementen</span>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <Toggle checked={els.spectrum} onChange={() => toggleEl('spectrum')} label="Frequentiespectrum" description="16-band FFT visualizer" />
+            <Toggle checked={els.controls} onChange={() => toggleEl('controls')} label="Bedieningsknoppen" description="Play/pauze, vorige/volgende, volume" />
+            <Toggle checked={els.queue} onChange={() => toggleEl('queue')} label="Wachtrij-knop" description="Snelle toegang tot afspeellijsten" />
+            <Toggle checked={els.sourceSwitch} onChange={() => toggleEl('sourceSwitch')} label="Bronkeuze (DAC output)" description="Wissel audio-uitgang vanaf het scherm" />
+            <Toggle checked={els.clock} onChange={() => toggleEl('clock')} label="Klok & datum" description="Rechtsboven in de statusbalk" />
+          </div>
+        </Card>
+      </div>
+    </div>
+  );
+}
+
+
+function App() {
+  const { Modal } = window.SoloistDS;
+  const { Palette, Tv } = window.Icons;
+  const [tab, setTab] = React.useState('player');
+  const [theme, setTheme] = React.useState('obsidian');
+  const [themeOpen, setThemeOpen] = React.useState(false);
+  const [castEditorOpen, setCastEditorOpen] = React.useState(false);
+
+  React.useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+  }, [theme]);
+
+  return (
+    <AppShell activeTab={tab} setActiveTab={setTab} onOpenTheme={() => setThemeOpen(true)}>
+      {tab === 'player' && <NowPlayingScreen />}
+      {tab === 'playlists' && <MediaCenterScreen />}
+      {tab === 'cast' && <CastDesignScreen onOpenContentEditor={() => setCastEditorOpen(true)} />}
+      {tab !== 'player' && tab !== 'playlists' && tab !== 'cast' && (
+        <div style={{ padding: '80px 0', textAlign: 'center', color: 'var(--text-muted)' }}>
+          <p style={{ font: 'var(--text-body)' }}>Dit scherm is nog niet in de UI-kit uitgewerkt — bouwt verder op dezelfde tokens en componenten.</p>
+        </div>
+      )}
+      <Modal open={themeOpen} onClose={() => setThemeOpen(false)} icon={<Palette size={18} />} title="Thema" subtitle="Kies een visuele stijl voor de web-interface en je Nest Hub scherm">
+        <ThemeCustomizerModalContent current={theme} onSelect={(id) => { setTheme(id); }} />
+      </Modal>
+      {castEditorOpen && (
+        <div style={{ position: 'fixed', inset: 0, background: 'var(--bg-page)', zIndex: 60, overflowY: 'auto' }}>
+          <header style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, padding: '16px 32px', borderBottom: '1px solid var(--border-subtle)', background: 'var(--bg-surface)', position: 'sticky', top: 0 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <Tv size={18} style={{ color: 'var(--accent)' }} />
+              <span style={{ font: 'var(--text-title)', color: 'var(--text-primary)' }}>Inhoud & vormgeving</span>
+            </div>
+            <button onClick={() => setCastEditorOpen(false)} style={{
+              width: 34, height: 34, borderRadius: 'var(--radius-md)', border: '1px solid var(--border-default)',
+              background: 'var(--bg-card)', color: 'var(--text-secondary)', cursor: 'pointer',
+            }}>✕</button>
+          </header>
+          <div style={{ maxWidth: 1080, margin: '0 auto', padding: '28px 32px 60px' }}>
+            <CastContentEditor />
+          </div>
+        </div>
+      )}
+    </AppShell>
+  );
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

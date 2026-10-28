@@ -1,0 +1,138 @@
+@import url('https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&display=swap');
+/* Cast view font picker (NestHubCastManager) — three extra faces from
+   distinct type categories: Poppins (geometric sans), Playfair Display
+   (elegant serif), Bebas Neue (condensed display, common in poster/music
+   branding). Only used by the 'custom_design' cast layout's typography. */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Playfair+Display:wght@400;600;700&family=Bebas+Neue&display=swap');
+@import "tailwindcss";
+@import "./styles/tokens/colors.css";
+@import "./styles/tokens/typography.css";
+@import "./styles/tokens/spacing.css";
+@import "./styles/tokens/effects.css";
+
+@layer base {
+  html {
+    color-scheme: dark;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    background-color: var(--bg-page);
+    color: var(--text-primary);
+    overflow-x: hidden;
+  }
+
+  code, pre, .font-mono {
+    font-family: var(--font-mono);
+  }
+
+  /* Most icon-only action buttons (add to queue/playlist, play, etc.) across the
+     app are bare `<button style={{...}}>` elements that never set their own
+     cursor or hover feedback — this is the one place that guarantees every
+     button in the app feels clickable, without having to patch each one. */
+  button:not(:disabled) {
+    cursor: pointer;
+    transition: opacity 120ms ease, transform 120ms ease;
+  }
+
+  button:not(:disabled):hover {
+    opacity: 0.85;
+  }
+
+  button:not(:disabled):active {
+    transform: scale(0.94);
+  }
+}
+
+/* Custom scrollbars — thin and theme-matched instead of the browser's bulky
+   default (light-gray on Chrome/macOS, glaring against a dark theme and
+   equally wrong against Daylight the other way round), so uses tokens
+   rather than fixed colors. Firefox has no ::-webkit-scrollbar equivalent,
+   hence the standard scrollbar-width/-color properties alongside it. */
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: var(--bg-inset);
+  border-radius: 4px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 4px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
+}
+
+/* Cast "Eigen ontwerp" layout — spinning vinyl record art mode */
+@keyframes soloist-vinyl-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Live Kleur Aura — idle "breathing" pulse used in the settings preview (the real
+   cast display drives this from the actual bass spectrum instead, see NestHubCastView). */
+@keyframes soloist-aura-pulse {
+  0%, 100% { transform: scale(1); opacity: 0.55; }
+  50% { transform: scale(1.12); opacity: 0.9; }
+}
+
+/* ui/Slider's <input type="range"> draws its own custom dot alongside the
+   native element — `appearance: none` set via inline style suppresses the
+   track chrome, but Chrome/Firefox still render their own default thumb via
+   a pseudo-element, which inline React styles can't reach at all. Without
+   this, every slider in the app showed two dots: the real one and the
+   browser's own on top of it. */
+input.hss-slider-input {
+  -webkit-appearance: none;
+  appearance: none;
+}
+input.hss-slider-input::-webkit-slider-runnable-track {
+  background: transparent;
+}
+input.hss-slider-input::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 0;
+  height: 0;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+input.hss-slider-input::-moz-range-track {
+  background: transparent;
+}
+input.hss-slider-input::-moz-range-thumb {
+  width: 0;
+  height: 0;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+/* Collapsible per-element cast editor sections (NestHubCastManager's
+   ElementSection) — <summary> uses flex layout, which suppresses the
+   browser's native disclosure triangle, so a chevron icon stands in for it
+   and rotates purely off the <details> element's own [open] attribute. */
+summary.hss-details-summary {
+  list-style: none;
+}
+summary.hss-details-summary::-webkit-details-marker {
+  display: none;
+}
+.hss-details-chevron {
+  transition: transform 150ms ease;
+}
+details[open] > summary.hss-details-summary .hss-details-chevron {
+  transform: rotate(180deg);
+}

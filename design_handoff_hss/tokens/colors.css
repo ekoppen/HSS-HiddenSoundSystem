@@ -1,0 +1,128 @@
+/* Soloist HiFi Hub — color tokens.
+   Dark-only product (runs on a home-audio display). Each theme is a data-theme
+   scope on <html> or any container; :root ships the default (Obsidian). */
+
+:root,
+[data-theme="obsidian"] {
+  --theme-name: "Obsidian Indigo";
+
+  --bg-page: #08090c;
+  --bg-surface: #101216;
+  --bg-card: #14161b;
+  --bg-card-hover: #191c22;
+  --bg-inset: #0b0c10;
+
+  --border-subtle: rgba(255,255,255,0.06);
+  --border-default: rgba(255,255,255,0.10);
+  --border-strong: rgba(255,255,255,0.16);
+
+  --text-primary: #f4f5f7;
+  --text-secondary: #b7bcc4;
+  --text-muted: #767c87;
+
+  --accent: #6366f1;
+  --accent-hover: #7678f5;
+  --accent-active: #4f46e5;
+  --accent-soft: rgba(99,102,241,0.14);
+  --accent-soft-strong: rgba(99,102,241,0.24);
+  --on-accent: #ffffff;
+
+  --meter-1: #4f46e5;
+  --meter-2: #6366f1;
+  --meter-3: #38bdf8;
+}
+
+[data-theme="slate"] {
+  --theme-name: "Nordic Slate";
+
+  --bg-page: #07090c;
+  --bg-surface: #0e1218;
+  --bg-card: #121620;
+  --bg-card-hover: #171c27;
+  --bg-inset: #0a0d12;
+
+  --border-subtle: rgba(148,190,220,0.07);
+  --border-default: rgba(148,190,220,0.12);
+  --border-strong: rgba(148,190,220,0.20);
+
+  --text-primary: #f2f6fa;
+  --text-secondary: #aebccb;
+  --text-muted: #71818f;
+
+  --accent: #4fa3c7;
+  --accent-hover: #63b3d6;
+  --accent-active: #3b87aa;
+  --accent-soft: rgba(79,163,199,0.14);
+  --accent-soft-strong: rgba(79,163,199,0.24);
+  --on-accent: #04141c;
+
+  --meter-1: #3b87aa;
+  --meter-2: #4fa3c7;
+  --meter-3: #8fd4ec;
+}
+
+[data-theme="emerald"] {
+  --theme-name: "Spotify Emerald";
+
+  --bg-page: #06100c;
+  --bg-surface: #0b1712;
+  --bg-card: #0f1c16;
+  --bg-card-hover: #13221b;
+  --bg-inset: #081310;
+
+  --border-subtle: rgba(52,211,153,0.07);
+  --border-default: rgba(52,211,153,0.12);
+  --border-strong: rgba(52,211,153,0.20);
+
+  --text-primary: #eefdf5;
+  --text-secondary: #a9c9ba;
+  --text-muted: #6d8b7c;
+
+  --accent: #10b981;
+  --accent-hover: #22c690;
+  --accent-active: #0c9268;
+  --accent-soft: rgba(16,185,129,0.14);
+  --accent-soft-strong: rgba(16,185,129,0.24);
+  --on-accent: #02150d;
+
+  --meter-1: #0c9268;
+  --meter-2: #10b981;
+  --meter-3: #6ee7b7;
+}
+
+[data-theme="copper"] {
+  --theme-name: "Vintage Tube";
+
+  --bg-page: #0c0906;
+  --bg-surface: #161009;
+  --bg-card: #1c140c;
+  --bg-card-hover: #221a10;
+  --bg-inset: #100b06;
+
+  --border-subtle: rgba(217,119,6,0.09);
+  --border-default: rgba(217,119,6,0.15);
+  --border-strong: rgba(217,119,6,0.24);
+
+  --text-primary: #fbf1e4;
+  --text-secondary: #cbb59c;
+  --text-muted: #8c7864;
+
+  --accent: #c8781f;
+  --accent-hover: #d98a30;
+  --accent-active: #a8631a;
+  --accent-soft: rgba(200,120,31,0.16);
+  --accent-soft-strong: rgba(200,120,31,0.26);
+  --on-accent: #1a1006;
+
+  --meter-1: #a8631a;
+  --meter-2: #c8781f;
+  --meter-3: #eab06a;
+}
+
+/* shared status colors — same across themes so meaning stays constant */
+:root {
+  --status-success: #34d399;
+  --status-warning: #f59e0b;
+  --status-danger: #fb7185;
+  --status-live: var(--status-success);
+}

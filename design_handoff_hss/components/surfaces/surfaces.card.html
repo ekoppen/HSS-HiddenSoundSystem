@@ -1,0 +1,43 @@
+<!-- @dsCard group="Components" viewport="700x320" name="Surfaces — Card, Modal" -->
+<!DOCTYPE html>
+<html data-theme="obsidian">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../../styles.css">
+<script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script>
+window.addEventListener('DOMContentLoaded', function () {
+  document.querySelectorAll('script[type="text/jsx"]').forEach(function (tag) {
+    var code = tag.textContent;
+    var out = Babel.transform(code, { presets: [['react', { runtime: 'classic' }]] }).code;
+    (0, eval)(out);
+  });
+});
+</script>
+<script src="../../icons.js"></script>
+<script src="../../components-bundle.js"></script>
+<style>body{margin:0;background:var(--bg-page);font-family:var(--font-sans);padding:24px;}#root{display:flex;flex-direction:column;gap:16px;}</style>
+</head>
+<body><div id="root"></div>
+<script type="text/jsx">
+const { Card, Modal } = window.SoloistDS;
+const { Palette } = window.Icons;
+function App(){
+  const [open, setOpen] = React.useState(true);
+  return (
+    <div style={{position:'relative', minHeight: 260}}>
+      <Card hoverable style={{maxWidth: 360}}>
+        <div style={{font:'var(--text-title)', color:'var(--text-primary)'}}>Volgende in wachtrij</div>
+        <div style={{font:'var(--text-body)', color:'var(--text-muted)', marginTop:6}}>3 nummers • real-time gesynchroniseerd</div>
+      </Card>
+      <Modal open={open} onClose={()=>setOpen(false)} icon={<Palette size={18}/>} title="Thema" subtitle="Kies een visuele stijl" footer={<div style={{textAlign:'right'}}><Card style={{display:'inline-block', padding:'8px 16px', background:'var(--accent)'}}><span style={{color:'var(--on-accent)', font:'var(--text-body-strong)'}}>Klaar</span></Card></div>}>
+        <div style={{font:'var(--text-body)', color:'var(--text-secondary)'}}>Modal body content goes here.</div>
+      </Modal>
+    </div>
+  );
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body></html>

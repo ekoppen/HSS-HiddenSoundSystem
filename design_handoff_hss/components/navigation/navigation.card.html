@@ -1,0 +1,39 @@
+<!-- @dsCard group="Components" viewport="700x140" name="Navigation — Tabs" -->
+<!DOCTYPE html>
+<html data-theme="obsidian">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../../styles.css">
+<script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script>
+window.addEventListener('DOMContentLoaded', function () {
+  document.querySelectorAll('script[type="text/jsx"]').forEach(function (tag) {
+    var code = tag.textContent;
+    var out = Babel.transform(code, { presets: [['react', { runtime: 'classic' }]] }).code;
+    (0, eval)(out);
+  });
+});
+</script>
+<script src="../../icons.js"></script>
+<script src="../../components-bundle.js"></script>
+<style>body{margin:0;background:var(--bg-page);font-family:var(--font-sans);padding:24px;}#root{display:flex;flex-direction:column;gap:16px;}</style>
+</head>
+<body><div id="root"></div>
+<script type="text/jsx">
+const { Tabs } = window.SoloistDS;
+const { Radio, Cast, Volume2, Sliders } = window.Icons;
+function App(){
+  const [tab, setTab] = React.useState('player');
+  const items = [
+    {id:'player', label:'Nu Afspelen', icon:<Radio size={14}/>},
+    {id:'cast', label:'Cast & Smart Display', icon:<Cast size={14}/>},
+    {id:'volume', label:'Volume & DAC', icon:<Volume2 size={14}/>},
+    {id:'playlists', label:'Media Center', icon:<Sliders size={14}/>},
+  ];
+  return <Tabs items={items} activeId={tab} onChange={setTab} />;
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body></html>
