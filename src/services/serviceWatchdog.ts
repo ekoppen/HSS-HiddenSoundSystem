@@ -10,6 +10,7 @@
 // previously-silent failure.
 import { execSync } from 'child_process';
 import { clearHealthIssue, reportHealthIssue } from './healthLog.ts';
+import { getMultiroomState } from './multiroom.ts';
 
 export interface ServiceStatus {
   unit: string;
@@ -164,7 +165,10 @@ export function evaluateServices(
 let previousSample: ServiceStatus[] | null = null;
 
 export function checkServices(): ServiceStatus[] {
-  const current = readServiceStatuses();
+  // A multiroom follower stops librespot on purpose (the leader's Spotify
+  // device plays here) — that's not an outage to report.
+  const isFollower = getMultiroomState().role === 'follower';
+  const current = readServiceStatuses().filter((s) => !(isFollower && s.unit === 'librespot-hss'));
   if (current.length === 0) return current; // not on a Pi, or systemd unreadable
 
   const verdict = evaluateServices(previousSample, current);

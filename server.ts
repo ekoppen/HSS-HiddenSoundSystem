@@ -47,6 +47,8 @@ import gpioRouter from './src/server/routes/gpio.ts';
 import likesRouter from './src/server/routes/likes.ts';
 import radioLogRouter from './src/server/routes/radioLog.ts';
 import hubsRouter from './src/server/routes/hubs.ts';
+import multiroomRouter from './src/server/routes/multiroom.ts';
+import { resetToSolo } from './src/services/multiroom.ts';
 import settingsBackupRouter from './src/server/routes/settingsBackup.ts';
 
 async function startServer() {
@@ -144,6 +146,7 @@ async function startServer() {
   app.use(likesRouter);
   app.use(radioLogRouter);
   app.use(hubsRouter);
+  app.use(multiroomRouter);
   app.use(settingsBackupRouter);
 
   // Create HTTP server
@@ -283,6 +286,10 @@ async function startServer() {
     const measuredVolume = piHardware.getHardwareVolumePct();
     applyVolumeChange({ volume: measuredVolume ?? playbackState.volume });
     piHardware.playStartupChime();
+    // A multiroom group is runtime-only; if HSS restarted mid-group, its
+    // /run overrides are still there — clear them so librespot/mpv play
+    // locally again instead of into a fifo nobody reads.
+    resetToSolo().catch((e) => console.error('[Multiroom] Opruimen bij opstarten mislukt:', e));
     syncLiveSpotifyState();
     // Linux mounts aren't persisted across a reboot — shares are added
     // dynamically via /api/nas/mount, not a static /etc/fstab entry — so

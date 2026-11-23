@@ -19,6 +19,10 @@ let mpvProcess: ChildProcess | null = null;
 let ipcClient: net.Socket | null = null;
 let ipcBuffer = '';
 let endedCallback: (() => void) | null = null;
+let currentTarget: string | null = null;
+// null = straight to ALSA `eq` (solo). A path = raw PCM into the Snapcast
+// fifo while this hub leads a multiroom group (see services/multiroom.ts).
+let snapFifoPath: string | null = null;
 let nextRequestId = 1;
 const pending = new Map<number, (result: any) => void>();
 
@@ -164,6 +168,39 @@ function sendRequest(command: unknown[]): Promise<any> {
 }
 
 /**
+ * mpv's output args. The fifo variant must match the Snapcast source's
+ * sampleformat exactly (44100:16:2, the same as librespot's pipe backend) —
+ * a mismatch plays at the wrong speed/pitch rather than failing loudly.
+ */
+export function mpvAudioArgs(fifoPath: string | null): string[] {
+  if (!fifoPath) return ['--audio-device=alsa/eq'];
+  return [
+    '--ao=pcm',
+    `--ao-pcm-file=${fifoPath}`,
+    '--ao-pcm-waveheader=no',
+    '--audio-format=s16',
+    '--audio-samplerate=44100',
+    '--audio-channels=stereo',
+  ];
+}
+
+/**
+ * Switches where mpv sends audio. Something already playing is restarted on
+ * the new output at the same position (and stays paused if it was paused),
+ * so joining/leaving a group doesn't silently drop the current track.
+ */
+export async function setLocalAudioOutput(fifoPath: string | null): Promise<void> {
+  if (fifoPath === snapFifoPath) return;
+  snapFifoPath = fifoPath;
+  if (!mpvProcess || !currentTarget) return;
+  const target = currentTarget;
+  const onEnded = endedCallback ?? (() => {});
+  const positionMs = await getLocalPositionMs();
+  const paused = (await sendRequest(['get_property', 'pause']))?.data === true;
+  playLocal(target, onEnded, { startMs: positionMs ?? 0, paused });
+}
+
+/**
  * Starts playing a local file path or stream URL, replacing anything already
  * playing. Targets ALSA's `eq` device directly — the same EQ/balance chain
  * /etc/asound.conf defines for `default` to route through before the real
@@ -175,7 +212,7 @@ function sendRequest(command: unknown[]): Promise<any> {
  * opens and plays every time. Naming it directly sidesteps ALSA's "default"
  * resolution entirely instead of depending on it behaving.
  */
-export function playLocal(target: string, onEnded: () => void): void {
+export function playLocal(target: string, onEnded: () => void, resume?: { startMs: number; paused: boolean }): void {
   if (!isSafeTarget(target)) {
     console.warn('[LocalPlayer] Geweigerd: onverwacht doel voor afspelen (geen absoluut pad of http(s)-URL):', target);
     stopLocal();
@@ -183,6 +220,7 @@ export function playLocal(target: string, onEnded: () => void): void {
   }
   stopLocal();
   endedCallback = onEnded;
+  currentTarget = target;
   ensureRuntimeDir();
   cleanupSocketFile();
   const isStream = /^https?:\/\//i.test(target);
@@ -191,7 +229,10 @@ export function playLocal(target: string, onEnded: () => void): void {
     [
       '--no-video',
       '--idle=no',
-      '--audio-device=alsa/eq',
+      ...mpvAudioArgs(snapFifoPath),
+      // A live stream has no position to return to, only files do.
+      ...(resume && !isStream && resume.startMs > 0 ? [`--start=${(resume.startMs / 1000).toFixed(1)}`] : []),
+      ...(resume?.paused ? ['--pause'] : []),
       `--input-ipc-server=${IPC_SOCKET}`,
       '--really-quiet',
       // Web radio streams run their own broadcast loudness processing — measured
@@ -242,6 +283,7 @@ export function seekLocal(positionMs: number): void {
 
 export function stopLocal(): void {
   endedCallback = null;
+  currentTarget = null;
   if (mpvProcess) {
     try {
       mpvProcess.kill();

@@ -662,6 +662,29 @@ WantedBy=multi-user.target
       addLog('Systemd Service', 'warning', `Systemd service configuratie: ${e.message}`);
     }
 
+    // 6. Snapcast for multiroom (services/multiroom.ts). Installed but
+    // masked: masked *before* apt so the package's own postinst can't start
+    // snapclient, which would grab the DAC away from mpv/librespot. Only a
+    // multiroom group unmasks them, and leaving the group masks them again.
+    try {
+      const installed = (pkg: string) => {
+        try {
+          return execSync(`dpkg-query -W -f='\${Status}' ${pkg} 2>/dev/null`, { encoding: 'utf8' }).includes('install ok installed');
+        } catch {
+          return false;
+        }
+      };
+      if (installed('snapserver') && installed('snapclient')) {
+        addLog('Multiroom', 'success', 'Snapcast (snapserver/snapclient) is reeds aanwezig.');
+      } else {
+        execSync('systemctl mask snapserver snapclient');
+        execSync('DEBIAN_FRONTEND=noninteractive apt-get install -y -q snapserver snapclient', { timeout: 300_000 });
+        addLog('Multiroom', 'success', 'Snapcast geïnstalleerd (staat uit tot er een groep gemaakt wordt).');
+      }
+    } catch (e: any) {
+      addLog('Multiroom', 'warning', `Snapcast installeren mislukt — multiroom werkt pas na: sudo apt-get install snapserver snapclient (${e.message})`);
+    }
+
     addLog('Voltooid', 'success', needsReboot ? 'Setup voltooid! Herstart je Raspberry Pi om de nieuwe I2S DAC overlay te laden.' : 'Setup succesvol voltooid! Spotify Connect is nu live.');
 
     return { success: true, logs, needsReboot };

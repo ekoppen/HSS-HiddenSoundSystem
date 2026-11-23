@@ -248,6 +248,13 @@ try {
   db.prepare('ALTER TABLE nas_library_index ADD COLUMN lyrics_checked_at INTEGER').run();
 } catch (e) {}
 
+// API key *for that other hub* — how this hub authenticates when it sends
+// multiroom commands there (join/leave group, forwarded transport). Never
+// returned by getDbKnownHubs(): GET /api/hubs is unauthenticated.
+try {
+  db.prepare('ALTER TABLE known_hubs ADD COLUMN api_key TEXT').run();
+} catch (e) {}
+
 // The `users`/`api_keys` tables above are legacy schema — nothing reads
 // from them; server.ts keeps the real auth state (users, password hashes,
 // session tokens) in the `config` key-value store under 'auth_state_v1'
@@ -550,19 +557,40 @@ export function getDbKnownHubs() {
       id: r.id,
       name: r.name,
       url: r.url,
+      hasApiKey: !!r.api_key,
     }));
   } catch (e) {
     return [];
   }
 }
 
-export function addDbKnownHub(hub: { name: string; url: string }) {
+/** Server-side only — includes the stored API key for that hub. */
+export function getDbKnownHubWithKey(id: string): { id: string; name: string; url: string; apiKey: string | null } | null {
+  try {
+    const r: any = db.prepare('SELECT * FROM known_hubs WHERE id = ?').get(id);
+    return r ? { id: r.id, name: r.name, url: r.url, apiKey: r.api_key || null } : null;
+  } catch (e) {
+    console.error('[DB] known_hubs lezen mislukt:', e);
+    return null;
+  }
+}
+
+export function setDbKnownHubApiKey(id: string, apiKey: string | null): boolean {
+  try {
+    return db.prepare('UPDATE known_hubs SET api_key = ? WHERE id = ?').run(apiKey, id).changes > 0;
+  } catch (e) {
+    console.error('[DB] API-sleutel voor hub opslaan mislukt:', e);
+    return false;
+  }
+}
+
+export function addDbKnownHub(hub: { name: string; url: string; apiKey?: string | null }) {
   const id = 'hub-' + Date.now();
   try {
     db.prepare(`
-      INSERT INTO known_hubs (id, name, url, created_at)
-      VALUES (?, ?, ?, ?)
-    `).run(id, hub.name, hub.url, Date.now());
+      INSERT INTO known_hubs (id, name, url, created_at, api_key)
+      VALUES (?, ?, ?, ?, ?)
+    `).run(id, hub.name, hub.url, Date.now(), hub.apiKey || null);
     return id;
   } catch (e) {
     return null;
